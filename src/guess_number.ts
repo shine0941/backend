@@ -18,9 +18,7 @@ export class GuessNumber extends NumberGamesBase<string> {
   }
 
   protected generateResult(): void {
-    console.log('B');
     this.result = this.getRandomIntString(this.digitLength);
-    console.log(this.result);
   }
 
   protected validateAnswer(answer: string): boolean {

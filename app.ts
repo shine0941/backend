@@ -20,7 +20,7 @@ function askQuestion(query: string): Promise<string> {
 
 async function main() {
   // init
-  let gameObject: NumberGamesBase<unknown>;
+  let gameObject: NumberGamesBase<string | number>;
   let answer: string = '';
 
   // asking game id
@@ -53,14 +53,12 @@ async function main() {
       return;
   }
 
-  if (NumberGamesBase.isGameObject(gameObject)) {
-    // handle game action
-    while (gameObject.isPlaying) {
-      // wait answer
-      answer = await askQuestion(gameObject.generateHint());
+  // handle game action
+  while (gameObject.isPlaying) {
+    // wait answer
+    answer = await askQuestion(gameObject.generateHint());
 
-      gameObject.guess(answer);
-    }
+    gameObject.guess(answer);
   }
 
   // game end

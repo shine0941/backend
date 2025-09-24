@@ -31,9 +31,7 @@ export class SecretNumber extends NumberGamesBase<number> {
   }
 
   protected generateResult(): void {
-    console.log('A');
     this.result = this.getRandomInt(this.hintMax, true);
-    console.log(this.result);
   }
 
   protected validateAnswer(answer: string): boolean {
