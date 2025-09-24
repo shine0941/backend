@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "outDir": "./js",
+    "noImplicitAny": false,
+    "allowUnreachableCode": true,
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "ES2016.Array.Include",
+      "ES2017.String",
+      "ES2019.Object",
+      "ES2021.String",
+      "ES2021.Intl",
+      "ES2022.Intl"
+    ],
+    "newLine": "lf",
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
