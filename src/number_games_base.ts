@@ -1,14 +1,17 @@
 export type GameMessage = GameSuccessMessage | GameFailMessage;
 
+// prettier-ignore
 export interface GameSuccessMessage {
   isCorrect: true,
 }
 
+// prettier-ignore
 export interface GameFailMessage {
   isCorrect: false,
   hint: string,
 }
 
+// prettier-ignore
 export interface ValidateResult {
   isValid: boolean,
   message: string,
