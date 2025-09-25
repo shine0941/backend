@@ -1,16 +1,16 @@
-import * as readline from 'readline';
-import { GuessNumber } from './src/guess_number.js';
-import { SecretNumber } from './src/secret_number.js';
-import { NumberGamesBase } from './src/number_games_base.js';
+import * as readline from "readline";
+import { GuessNumber } from "./src/guess_number";
+import { SecretNumber } from "./src/secret_number";
+import { NumberGamesBase, GameMessage } from "./src/number_games_base";
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-const allowed_games: number[] = [1, 2];
+const allowedGames: number[] = [1, 2];
 
-function askQuestion(query: string): Promise<string> {
+function askQuestion(query: string = ""): Promise<string> {
   return new Promise((resolve) => {
     rl.question(query, (answer) => {
       resolve(answer);
@@ -18,20 +18,27 @@ function askQuestion(query: string): Promise<string> {
   });
 }
 
+function getGameMessage(message: GameMessage): string {
+  if (message.isCorrect === true) {
+    return;
+  }
+  return message.hint;
+}
+
 async function main() {
   // init
-  let gameObject: NumberGamesBase<string | number>;
-  let answer: string = '';
+  let gameObject: NumberGamesBase;
+  let answer: string = "";
 
   // asking game id
-  const gameInput = await askQuestion(
-    'enter 1) for playing guess-numbers, 2) for playing secret-number:'
+  const gameInput: string = await askQuestion(
+    "enter 1) for playing guess-numbers, 2) for playing secret-number:"
   );
-  const game = parseInt(gameInput);
+  const game: number = parseInt(gameInput);
 
   // handle invalid input
-  if (isNaN(game) || !allowed_games.includes(game)) {
-    console.log('invalid game input');
+  if (isNaN(game) || !allowedGames.includes(game)) {
+    console.log("invalid game input");
 
     rl.close();
     return;
@@ -48,20 +55,33 @@ async function main() {
       break;
 
     default:
-      console.log('handle default case');
+      console.log("handle default case");
       rl.close();
       return;
   }
 
-  // handle game action
+  let gameMessage: GameMessage;
+
+  // game start
+  gameMessage = gameObject.gameStart();
+  console.log(gameObject.gameStartMessage());
+
+  // playing
   while (gameObject.isPlaying) {
     // wait answer
-    answer = await askQuestion(gameObject.generateHint());
+    answer = await askQuestion(getGameMessage(gameMessage));
 
-    gameObject.guess(answer);
+    gameMessage = gameObject.guess(answer);
   }
 
-  // game end
+  // handle game result
+  if (gameMessage.isCorrect === true) {
+    console.log(gameObject.gameWinMessage());
+  } else {
+    console.log(gameObject.gameLoseMessage());
+  }
+
+  // end
   rl.close();
 
   return;

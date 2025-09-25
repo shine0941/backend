@@ -1,57 +1,73 @@
-import { NumberGamesBase } from './number_games_base';
-export class GuessNumber extends NumberGamesBase<string> {
-  // private result: string;
-  private digitLength: number;
+import {
+  NumberGamesBase,
+  GameMessage,
+  ValidateResult,
+} from "./number_games_base";
 
-  public constructor(digitLength: number = 4) {
-    super();
+export class GuessNumber extends NumberGamesBase {
+  protected readonly gameName: string = "guess-number";
+  protected result: string = "";
 
-    this.digitLength = digitLength;
+  // determine class-only parameter
+  private digitLength: number = 4;
 
-    // game start
-    // this.result = this.getRandomIntString(this.digitLength);
-    // this.generateResult();
-    // this.isPlaying = true;
+  public gameStart(): GameMessage {
+    this.result = this.generateResult();
 
-    // game start message
-    this.hint = 'guess-number game start';
+    this.isPlaying = true;
+
+    return {
+      isCorrect: false,
+      hint: "let's guess:",
+    };
   }
 
-  protected generateResult(): void {
-    this.result = this.getRandomIntString(this.digitLength);
+  protected generateResult(): string {
+    return NumberGamesBase.getRandomIntString(this.digitLength);
   }
 
-  protected validateAnswer(answer: string): boolean {
-    const answerInt = Number(answer);
+  protected validateAnswer(answer: string = ""): ValidateResult {
+    const answerInt: number = Number(answer);
 
     // check answer include char
     if (isNaN(answerInt)) {
-      this.hint = 'invalid input';
-      return false;
+      return {
+        isValid: false,
+        message: "invalid input",
+      };
     }
 
     // check answer length
     if (answer.length !== this.digitLength) {
-      this.hint = 'invalid input';
-      return false;
+      return {
+        isValid: false,
+        message: "invalid input",
+      };
     }
 
-    return true;
+    return {
+      isValid: true,
+      message: "",
+    };
   }
 
-  public guess(answer: string): void {
+  public guess(answer: string = ""): GameMessage {
     // init
-    let resultA = 0;
-    let resultB = 0;
+    let resultA: number = 0;
+    let resultB: number = 0;
     let excludeIndex: number[] = []; //exclude index that is full match
 
     // validate input
-    if (!this.validateAnswer(answer)) {
-      return;
+    let validateResult: ValidateResult = this.validateAnswer(answer);
+    if (!validateResult.isValid) {
+      return {
+        isCorrect: false,
+        hint: `${validateResult.message}:`,
+      };
     }
 
     // handle full match case
-    answer.split('').forEach((num, index) => {
+    answer.split("").forEach((num, index) => {
       if (this.result[index] === num) {
         resultA++;
 
@@ -60,12 +76,13 @@ export class GuessNumber extends NumberGamesBase<string> {
     });
 
     // handle number match case
-    answer.split('').forEach((num, index) => {
-      let numIndex = this.result.indexOf(num);
+    answer.split("").forEach((num, index) => {
+      let numIndex: number = this.result.indexOf(num);
 
       while (numIndex >= 0) {
         if (!excludeIndex.includes(numIndex)) {
           excludeIndex.push(numIndex);
+
           resultB++;
         }
 
@@ -73,16 +90,24 @@ export class GuessNumber extends NumberGamesBase<string> {
       }
     });
 
+    let isCorrect: boolean = false;
+    let hint: string = "";
+
     // handle results
     if (resultA === this.digitLength) {
       // case win
-      console.log(`you win, the answer is ${this.result}`);
       this.isPlaying = false;
+      return {
+        isCorrect: true,
+      };
     } else {
       // case lose
-      this.hint = `${answer}=>${resultA}A${resultB}B`;
+      hint = `${answer}=>${resultA}A${resultB}B:`;
     }
 
-    return;
+    return {
+      isCorrect: isCorrect,
+      hint: hint,
+    };
   }
 }
