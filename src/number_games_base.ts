@@ -60,13 +60,16 @@ export abstract class NumberGamesBase {
     let rtn: string = "";
 
     for (let i: number = 0; i < length; i++) {
-      rtn += this.getRandonInt(10).toString();
+      rtn += this.getRandomInt(10).toString();
     }
 
     return rtn;
   }
 
-  protected static getRandonInt(max: number = 0, plusOne: boolean = false) {
+  protected static getRandomInt(
+    max: number = 0,
+    plusOne: boolean = false
+  ): number {
     return Math.floor(Math.random() * max) + (plusOne ? 1 : 0);
   }
 }

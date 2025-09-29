@@ -26,7 +26,7 @@ export class SecretNumber extends NumberGamesBase {
   }
 
   protected generateResult(): number {
-    return NumberGamesBase.getRandonInt(this.hintMax, true);
+    return NumberGamesBase.getRandomInt(this.hintMax, true);
   }
 
   protected validateAnswer(answer: string = ""): ValidateResult {
@@ -56,7 +56,7 @@ export class SecretNumber extends NumberGamesBase {
 
   public guess(answer: string = ""): GameMessage {
     // validate input
-    let validateResult: ValidateResult = this.validateAnswer(answer);
+    const validateResult: ValidateResult = this.validateAnswer(answer);
     if (!validateResult.isValid) {
       return {
         isCorrect: false,
@@ -99,7 +99,8 @@ export class SecretNumber extends NumberGamesBase {
   }
 
   private basicHint(): string {
-    return `between ${this.hintMin} to ${this.hintMax},(${this.maxAttempts - this.attempts
-      }/${this.maxAttempts}):`;
+    return `between ${this.hintMin} to ${this.hintMax},(${
+      this.maxAttempts - this.attempts
+    }/${this.maxAttempts}):`;
   }
 }
