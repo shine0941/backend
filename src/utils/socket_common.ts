@@ -19,3 +19,7 @@ export interface ClientToServerEvents {
   'client:gameCallBack': (data: SocketData) => void;
   'client:continueCallBack': (data: SocketData) => void;
 }
+
+export type ServerEvents = keyof ServerToClientEvents;
+
+export type ClientEvents = keyof ClientToServerEvents;

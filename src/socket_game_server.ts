@@ -6,6 +6,7 @@ import { SecretNumber } from "./secret_number";
 import {
   SocketData,
   ServerToClientEvents,
+  ServerEvents,
   ClientToServerEvents,
 } from "./utils/socket_common";
 
@@ -15,9 +16,14 @@ interface ClientGameDictionary {
 }
 
 export class SocketGameServer {
-  private socketServer = new Server();
+  private socketServer = new Server<
+    ClientToServerEvents,
+    ServerToClientEvents
+  >();
   private gameObjects: ClientGameDictionary = {};
   private port: number;
+
+  private existedRoomId: Set<string> = new Set();
 
   constructor(port: number = 3000) {
     this.port = port;
@@ -32,36 +38,47 @@ export class SocketGameServer {
 
   private setupSocketServerHandlers(): void {
     const httpServer = createServer();
-    this.socketServer = new Server<ServerToClientEvents, ClientToServerEvents>(
-      httpServer,
-      {}
-    );
+    this.socketServer = new Server(httpServer, {});
 
     // handler connection events
     this.socketServer.on("connection", (socket: Socket) => {
       console.log(`Client connected: ${socket.id}`);
-      const roomId = `room_${socket.id}`;
+      // const roomId = `room_${socket.id}`;
 
       // join room
-      this.joinRoomHandler(socket, roomId);
+      this.joinRoomHandler(socket);
 
       // client message handler
-      this.messageHandler(socket, roomId);
+      this.messageHandler(socket);
 
       // select-game callback
-      this.selectGameHandler(socket, roomId);
+      this.selectGameHandler(socket);
 
       // game callback
-      this.gameHandler(socket, roomId);
+      this.gameHandler(socket);
 
       // continue callback
-      this.continueHandler(socket, roomId);
+      this.continueHandler(socket);
     });
   }
 
+  private generateRoomId(): string {
+    let roomId: string;
+    do {
+      roomId = NumberGamesBase.getRandomIntString(6);
+    } while (this.existedRoomId.has(roomId));
+    return roomId;
+  }
+
+  private getRoomId(socket: Socket): string {
+    // TODO
+    return Array.from(socket.rooms)[1];
+  }
+
   // client to server event handlers
-  private joinRoomHandler(socket: Socket, roomId: string): void {
+  private joinRoomHandler(socket: Socket): void {
     socket.once("client:joinRoom", () => {
+      const roomId = `room_${this.generateRoomId()}`;
       socket.join(roomId);
 
       this.messageSender(roomId, `you joined room ${roomId}`);
@@ -70,15 +87,19 @@ export class SocketGameServer {
     });
   }
 
-  private messageHandler(socket: Socket, roomId: string): void {
+  private messageHandler(socket: Socket): void {
     socket.on("client:message", (data: SocketData) => {
+      const roomId = this.getRoomId(socket);
+
       console.log(`[message](${roomId})=>${data.message}`);
     });
   }
 
-  private selectGameHandler(socket: Socket, roomId: string): void {
+  private selectGameHandler(socket: Socket): void {
     socket.on("client:selectGameCallBack", (data: SocketData) => {
       const gameInput = data.message;
+
+      const roomId = this.getRoomId(socket);
 
       console.log(`[selectGameCallBack](${roomId})=>${gameInput}`);
       this.messageSender(roomId, `you selected game:${gameInput}`);
@@ -105,9 +126,10 @@ export class SocketGameServer {
     });
   }
 
-  private gameHandler(socket: Socket, roomId: string): void {
+  private gameHandler(socket: Socket): void {
     socket.on("client:gameCallBack", (data: SocketData) => {
       const answer = data.message;
+      const roomId = this.getRoomId(socket);
       const gameObject = this.gameObjects[roomId];
 
       console.log(`[gameCallBack](${roomId}):${answer}`);
@@ -134,8 +156,9 @@ export class SocketGameServer {
     });
   }
 
-  private continueHandler(socket: Socket, roomId: string): void {
+  private continueHandler(socket: Socket): void {
     socket.on("client:continueCallBack", (data: SocketData) => {
+      const roomId = this.getRoomId(socket);
       const answer = data.message;
 
       switch (answer) {
@@ -160,7 +183,7 @@ export class SocketGameServer {
   // server to client event handlers
   private eventSender(
     roomId: string,
-    event: string,
+    event: ServerEvents,
     message: SocketData
   ): void {
     this.socketServer.to(roomId).emit(event, message);

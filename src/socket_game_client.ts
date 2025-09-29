@@ -3,7 +3,9 @@ import { io, Socket } from "socket.io-client";
 import {
   SocketData,
   ServerToClientEvents,
+  ServerEvents,
   ClientToServerEvents,
+  ClientEvents,
 } from "./utils/socket_common";
 
 export class SocketGameClient {
@@ -61,27 +63,30 @@ export class SocketGameClient {
     });
   }
 
+  private async callbackHandler(
+    emitEvent: ClientEvents,
+    message: SocketData
+  ): Promise<void> {
+    const answer = await this.askQuestion(`${message.message}`);
+
+    this.socketClient.emit(emitEvent, { message: answer });
+  }
+
   private selectGameHandler(): void {
     this.socketClient.on("server:selectGame", async (message: SocketData) => {
-      const game = await this.askQuestion(`${message.message}`);
-
-      this.socketClient.emit("client:selectGameCallBack", { message: game });
+      this.callbackHandler("client:selectGameCallBack", message);
     });
   }
 
   private gameHandler(): void {
     this.socketClient.on("server:game", async (message: SocketData) => {
-      const answer = await this.askQuestion(`${message.message}`);
-
-      this.socketClient.emit("client:gameCallBack", { message: answer });
+      this.callbackHandler("client:gameCallBack", message);
     });
   }
 
   private continueHandler(): void {
     this.socketClient.on("server:continue", async (message: SocketData) => {
-      const answer = await this.askQuestion(`${message.message}`);
-
-      this.socketClient.emit("client:continueCallBack", { message: answer });
+      this.callbackHandler("client:continueCallBack", message);
     });
   }
 

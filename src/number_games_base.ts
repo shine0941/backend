@@ -55,7 +55,7 @@ export abstract class NumberGamesBase {
     return obj instanceof NumberGamesBase;
   }
 
-  protected static getRandomIntString(length: number = 4): string {
+  public static getRandomIntString(length: number = 4): string {
     let rtn: string = "";
 
     for (let i: number = 0; i < length; i++) {
