@@ -61,7 +61,7 @@ export class SocketGameServer {
 
   // client to server event handlers
   private joinRoomHandler(socket: Socket, roomId: string): void {
-    socket.once("joinRoom", () => {
+    socket.once("client:joinRoom", () => {
       socket.join(roomId);
 
       this.messageSender(roomId, `you joined room ${roomId}`);
@@ -71,13 +71,13 @@ export class SocketGameServer {
   }
 
   private messageHandler(socket: Socket, roomId: string): void {
-    socket.on("message", (data: SocketData) => {
+    socket.on("client:message", (data: SocketData) => {
       console.log(`[message](${roomId})=>${data.message}`);
     });
   }
 
   private selectGameHandler(socket: Socket, roomId: string): void {
-    socket.on("selectGameCallBack", (data: SocketData) => {
+    socket.on("client:selectGameCallBack", (data: SocketData) => {
       const gameInput = data.message;
 
       console.log(`[selectGameCallBack](${roomId})=>${gameInput}`);
@@ -106,7 +106,7 @@ export class SocketGameServer {
   }
 
   private gameHandler(socket: Socket, roomId: string): void {
-    socket.on("gameCallBack", (data: SocketData) => {
+    socket.on("client:gameCallBack", (data: SocketData) => {
       const answer = data.message;
       const gameObject = this.gameObjects[roomId];
 
@@ -135,7 +135,7 @@ export class SocketGameServer {
   }
 
   private continueHandler(socket: Socket, roomId: string): void {
-    socket.on("continueCallBack", (data: SocketData) => {
+    socket.on("client:continueCallBack", (data: SocketData) => {
       const answer = data.message;
 
       switch (answer) {
@@ -167,19 +167,19 @@ export class SocketGameServer {
   }
 
   private messageSender(roomId: string, message: string): void {
-    this.eventSender(roomId, "serverMessage", { message: message });
+    this.eventSender(roomId, "server:message", { message: message });
   }
 
   private gameSender(roomId: string, message: string): void {
-    this.eventSender(roomId, "game", { message: message });
+    this.eventSender(roomId, "server:game", { message: message });
   }
 
   private continueSender(roomId: string): void {
-    this.eventSender(roomId, "continue", { message: "continue?[y/n]:" });
+    this.eventSender(roomId, "server:continue", { message: "continue?[y/n]:" });
   }
 
   private selectGameSender(roomId: string): void {
-    this.eventSender(roomId, "selectGame", {
+    this.eventSender(roomId, "server:selectGame", {
       message:
         "enter 1) for playing guess-numbers, 2) for playing secret-number:",
     });

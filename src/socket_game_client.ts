@@ -29,7 +29,7 @@ export class SocketGameClient {
     this.socketClient.on("connect", () => {
       console.log("Welcom!");
 
-      this.socketClient.emit("joinRoom");
+      this.socketClient.emit("client:joinRoom");
 
       this.initReadline();
     });
@@ -56,32 +56,32 @@ export class SocketGameClient {
 
   //   event handlers
   private messageHandler(): void {
-    this.socketClient.on("serverMessage", (message: SocketData) => {
+    this.socketClient.on("server:message", (message: SocketData) => {
       console.log(`${message.message}`);
     });
   }
 
   private selectGameHandler(): void {
-    this.socketClient.on("selectGame", async (message: SocketData) => {
+    this.socketClient.on("server:selectGame", async (message: SocketData) => {
       const game = await this.askQuestion(`${message.message}`);
 
-      this.socketClient.emit("selectGameCallBack", { message: game });
+      this.socketClient.emit("client:selectGameCallBack", { message: game });
     });
   }
 
   private gameHandler(): void {
-    this.socketClient.on("game", async (message: SocketData) => {
+    this.socketClient.on("server:game", async (message: SocketData) => {
       const answer = await this.askQuestion(`${message.message}`);
 
-      this.socketClient.emit("gameCallBack", { message: answer });
+      this.socketClient.emit("client:gameCallBack", { message: answer });
     });
   }
 
   private continueHandler(): void {
-    this.socketClient.on("continue", async (message: SocketData) => {
+    this.socketClient.on("server:continue", async (message: SocketData) => {
       const answer = await this.askQuestion(`${message.message}`);
 
-      this.socketClient.emit("continueCallBack", { message: answer });
+      this.socketClient.emit("client:continueCallBack", { message: answer });
     });
   }
 

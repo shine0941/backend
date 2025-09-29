@@ -5,17 +5,17 @@ export interface SocketData {
 
 // prettier-ignore
 export interface ServerToClientEvents {
-  serverMessage: (message: SocketData) => void;
-  game: (message: SocketData) => void;
-  continue: (message: SocketData) => void;
-  selectGame: (message: SocketData) => void;
+  'server:message': (message: SocketData) => void;
+  'server:game': (message: SocketData) => void;
+  'server:continue': (message: SocketData) => void;
+  'server:selectGame': (message: SocketData) => void;
 }
 
 // prettier-ignore
 export interface ClientToServerEvents {
-  joinRoom: () => void;
-  message: (data: SocketData) => void;
-  selectGameCallBack: (data: SocketData) => void;
-  gameCallBack: (data: SocketData) => void;
-  continueCallBack: (data: SocketData) => void;
+  'client:joinRoom': () => void;
+  'client:message': (data: SocketData) => void;
+  'client:selectGameCallBack': (data: SocketData) => void;
+  'client:gameCallBack': (data: SocketData) => void;
+  'client:continueCallBack': (data: SocketData) => void;
 }
