@@ -16,7 +16,7 @@ interface ClientGameDictionary {
 
 export class SocketGameServer {
   private socketServer = new Server();
-  private gameObjescts: ClientGameDictionary = {};
+  private gameObjects: ClientGameDictionary = {};
   private port: number;
 
   constructor(port: number = 3000) {
@@ -86,17 +86,17 @@ export class SocketGameServer {
       // valid game input
       if (NumberGamesBase.isValidGameId(gameInput) === true) {
         // valid game-id and init game
-        this.gameObjescts[roomId] = this.gameInit(gameInput);
+        this.gameObjects[roomId] = this.gameInit(gameInput);
 
         // game start message
         this.messageSender(
           roomId,
-          this.gameObjescts[roomId].gameStartMessage()
+          this.gameObjects[roomId].gameStartMessage()
         );
 
         // game start
         let gameMessage: GameMessage;
-        gameMessage = this.gameObjescts[roomId].gameStart();
+        gameMessage = this.gameObjects[roomId].gameStart();
 
         this.gameSender(roomId, this.getGameMessage(gameMessage));
       } else {
@@ -111,7 +111,7 @@ export class SocketGameServer {
   private gameHandler(socket: Socket, roomId: string): void {
     socket.on("gameCallBack", (data: SocketData) => {
       const answer = data.message;
-      const gameObject = this.gameObjescts[roomId];
+      const gameObject = this.gameObjects[roomId];
 
       console.log(`[gameCallBack](${roomId}):${answer}`);
 
