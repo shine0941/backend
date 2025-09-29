@@ -18,7 +18,7 @@ function askQuestion(query: string = ""): Promise<string> {
   });
 }
 
-function getGameMessage(message: GameMessage): string | undefined {
+function getGameMessage(message: GameMessage): string {
   if (message.isCorrect === true) {
     return;
   }

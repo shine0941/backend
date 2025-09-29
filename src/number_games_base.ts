@@ -4,13 +4,11 @@ export type GameMessage = GameSuccessMessage | GameFailMessage;
 export interface GameSuccessMessage {
   isCorrect: true,
 }
-
 // prettier-ignore
 export interface GameFailMessage {
   isCorrect: false,
   hint: string,
 }
-
 // prettier-ignore
 export interface ValidateResult {
   isValid: boolean,
@@ -18,6 +16,7 @@ export interface ValidateResult {
 }
 
 export abstract class NumberGamesBase {
+  private static allowedGames: number[] = [1, 2];
   protected abstract readonly gameName: string;
   protected abstract result: unknown;
   protected isPlayingFlag: boolean = false;
@@ -60,16 +59,24 @@ export abstract class NumberGamesBase {
     let rtn: string = "";
 
     for (let i: number = 0; i < length; i++) {
-      rtn += this.getRandomInt(10).toString();
+      rtn += this.getRandonInt(10).toString();
     }
 
     return rtn;
   }
 
-  protected static getRandomInt(
-    max: number = 0,
-    plusOne: boolean = false
-  ): number {
+  protected static getRandonInt(max: number = 0, plusOne: boolean = false) {
     return Math.floor(Math.random() * max) + (plusOne ? 1 : 0);
+  }
+
+  public static isValidGameId(gameInput): boolean {
+    const gameId: number = parseInt(gameInput);
+
+    if (isNaN(gameId) || !this.allowedGames.includes(gameId)) {
+      console.log("invalid game input");
+
+      return false;
+    }
+    return true;
   }
 }

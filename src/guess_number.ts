@@ -55,10 +55,10 @@ export class GuessNumber extends NumberGamesBase {
     // init
     let resultA: number = 0;
     let resultB: number = 0;
-    const excludeIndex: number[] = []; //exclude index that is full match
+    let excludeIndex: number[] = []; //exclude index that is full match
 
     // validate input
-    const validateResult: ValidateResult = this.validateAnswer(answer);
+    let validateResult: ValidateResult = this.validateAnswer(answer);
     if (!validateResult.isValid) {
       return {
         isCorrect: false,
