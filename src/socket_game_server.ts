@@ -89,10 +89,7 @@ export class SocketGameServer {
         this.gameObjects[roomId] = this.gameInit(gameInput);
 
         // game start message
-        this.messageSender(
-          roomId,
-          this.gameObjects[roomId].gameStartMessage()
-        );
+        this.messageSender(roomId, this.gameObjects[roomId].gameStartMessage());
 
         // game start
         let gameMessage: GameMessage;
@@ -200,10 +197,6 @@ export class SocketGameServer {
       case 2:
         gameObject = new SecretNumber();
         break;
-
-      default:
-        console.log("handle default case");
-        return;
     }
 
     return gameObject;
