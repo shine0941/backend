@@ -1,6 +1,6 @@
 // prettier-ignore
 export interface SocketData {
-  message?: string,
+  message: string,
 }
 
 // prettier-ignore
